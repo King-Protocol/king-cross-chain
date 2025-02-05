@@ -6,11 +6,17 @@ const contractName = 'KingOFTL1'
 
 const deploy: DeployFunction = async (hre) => {
     const { getNamedAccounts, deployments } = hre
-
+    
     const { deploy } = deployments
     const { deployer } = await getNamedAccounts()
 
     assert(deployer, 'Missing named deployer account')
+
+    const expectedNetworkId = 1;
+    if (hre.network.config.chainId !== expectedNetworkId) {
+        console.error(`Invalid network ID: ${hre.network.config.chainId}. Expected: ${expectedNetworkId}`)
+        return
+    }
 
     console.log(`Network: ${hre.network.name}`)
     console.log(`Deployer: ${deployer}`)

@@ -60,7 +60,7 @@ describe('KingOFTL1 Test', function () {
 
         // Deploying two instances of KingOFTL2 contract with different identifiers and linking them to the mock LZEndpoint
         kingOFTL1 = await KingOFTL1.deploy(token.address, mockEndpointV2A.address, ownerA.address)
-        kingOFTL2 = await KingOFTL2.deploy('KING', 'KING', mockEndpointV2B.address, ownerB.address)
+        kingOFTL2 = await KingOFTL2.deploy('King Token', 'KING', mockEndpointV2B.address, ownerB.address)
 
         // Setting destination endpoints in the LZEndpoint mock for each KingOFTL2 instance
         await mockEndpointV2A.setDestLzEndpoint(kingOFTL2.address, mockEndpointV2B.address)
@@ -112,4 +112,44 @@ describe('KingOFTL1 Test', function () {
         expect(finalBalanceAdapter).eql(tokensToSend)
         expect(finalBalanceB).eql(tokensToSend)
     })
+
+    it('should not send tokens if paused. Procceed if unpoused', async function () {
+        const initialAmount = ethers.utils.parseEther('100')
+        await token.mint(ownerA.address, initialAmount)
+
+        const tokensToSend = ethers.utils.parseEther('1')
+
+        const options = Options.newOptions().addExecutorLzReceiveOption(200000, 0).toHex().toString()
+
+        const sendParam = [
+            eidB,
+            ethers.utils.zeroPad(ownerB.address, 32),
+            tokensToSend,
+            tokensToSend,
+            options,
+            '0x',
+            '0x',
+        ]
+
+        const [nativeFee] = await kingOFTL1.quoteSend(sendParam, false)
+
+        await token.connect(ownerA).approve(kingOFTL1.address, tokensToSend)
+
+        await kingOFTL1.pause();
+        await expect(
+            kingOFTL1.send(sendParam, [nativeFee, 0], ownerA.address, { value: nativeFee })
+        ).to.be.revertedWithCustomError(kingOFTL1, "EnforcedPause");
+
+        await kingOFTL1.unpause();
+
+        await kingOFTL1.send(sendParam, [nativeFee, 0], ownerA.address, { value: nativeFee })
+
+        const finalBalanceA = await token.balanceOf(ownerA.address)
+        const finalBalanceAdapter = await token.balanceOf(kingOFTL1.address)
+        const finalBalanceB = await kingOFTL2.balanceOf(ownerB.address)
+
+        expect(finalBalanceA).eql(initialAmount.sub(tokensToSend))
+        expect(finalBalanceAdapter).eql(tokensToSend)
+        expect(finalBalanceB).eql(tokensToSend)
+    });
 })

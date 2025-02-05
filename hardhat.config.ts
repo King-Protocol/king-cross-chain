@@ -4,6 +4,7 @@ import 'hardhat-deploy'
 import 'hardhat-contract-sizer'
 import '@nomiclabs/hardhat-ethers'
 import '@layerzerolabs/toolbox-hardhat'
+import '@nomicfoundation/hardhat-chai-matchers'
 import { HardhatUserConfig, HttpNetworkAccountsUserConfig } from 'hardhat/types'
 
 import { EndpointId } from '@layerzerolabs/lz-definitions'
@@ -48,7 +49,7 @@ const config: HardhatUserConfig = {
             url: process.env.RPC_URL_MAINNET || 'https://eth.drpc.org/',
             accounts,
             oftAdapter: {
-                tokenAddress: '0x0',
+                tokenAddress: '0x8F08B70456eb22f6109F57b8fafE862ED28E6040',
             },
         },
         'swell': {
