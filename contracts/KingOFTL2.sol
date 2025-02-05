@@ -20,19 +20,15 @@ contract KingOFTL2 is OFT, Pausable {
         uint256 _minAmountLD,
         uint32 _dstEid
     ) internal override whenNotPaused returns  (uint256 amountSentLD, uint256 amountReceivedLD) {
-        (amountSentLD, amountReceivedLD) = _debitView(_amountLD, _minAmountLD, _dstEid);
-
-        _burn(_from, amountSentLD);
+        return super._debit(_from, _amountLD, _minAmountLD, _dstEid);
     }
 
     function _credit(
         address _to,
         uint256 _amountLD,
-        uint32 /*_srcEid*/
+        uint32 _srcEid
     ) internal whenNotPaused override returns (uint256 amountReceivedLD) {
-        if (_to == address(0x0)) _to = address(0xdead);
-        _mint(_to, _amountLD);
-        return _amountLD;
+        return super._credit(_to, _amountLD, _srcEid);
     }
 
     function pause() external onlyOwner {
