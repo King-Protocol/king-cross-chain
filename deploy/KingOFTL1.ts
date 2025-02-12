@@ -63,7 +63,7 @@ const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const l1ProxyAddress = UUPSDeployment.address;
     log(`UUPS proxy deployed at ${l1ProxyAddress}`);
 
-    const kingOFTL1 = await ethers.getContractAt('KingOFTL1Mock', l1ProxyAddress);
+    const kingOFTL1 = await ethers.getContractAt('KingOFTL1', l1ProxyAddress);
 
     const initTx = await kingOFTL1.initialize(deployer, deployer);
     await initTx.wait();
