@@ -1,0 +1,7 @@
+ds-test/=lib/forge-std/lib/ds-test/src/
+//forge-std/=lib/forge-std/src/
+@layerzerolabs/lz-evm-protocol-v2/contracts/=node_modules/@layerzerolabs/lz-evm-protocol-v2/contracts/
+@layerzerolabs/lz-evm-messagelib-v2/contracts/=node_modules/@layerzerolabs/lz-evm-messagelib-v2/contracts/
+layerzero-v2/oapp/contracts/=node_modules/layerzero-v2/oapp/contracts/
+@layerzerolabs/lz-evm-v1-0.7/contracts/=node_modules/@layerzerolabs/lz-evm-v1-0.7/contracts/
+@layerzerolabs/test-devtools-evm-foundry/contracts/=node_modules/@layerzerolabs/test-devtools-evm-foundry/contracts/

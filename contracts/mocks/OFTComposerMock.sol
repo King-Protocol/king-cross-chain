@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-import { IOAppComposer } from "@layerzerolabs/oapp-evm/contracts/oapp/interfaces/IOAppComposer.sol";
+import { IOAppComposer } from "layerzero-v2/oapp/contracts/oapp/interfaces/IOAppComposer.sol";
 
 contract OFTComposerMock is IOAppComposer {
     // default empty values for testing a lzCompose received message
@@ -18,7 +18,6 @@ contract OFTComposerMock is IOAppComposer {
         address _executor,
         bytes calldata /*_extraData*/
     ) external payable {
-        from = _from;
         guid = _guid;
         message = _message;
         executor = _executor;

@@ -5,11 +5,23 @@ import 'hardhat-contract-sizer'
 import '@nomiclabs/hardhat-ethers'
 import '@layerzerolabs/toolbox-hardhat'
 import '@nomicfoundation/hardhat-chai-matchers'
-import { HardhatUserConfig, HttpNetworkAccountsUserConfig } from 'hardhat/types'
+import { HardhatUserConfig, HttpNetworkAccountsUserConfig,HardhatRuntimeEnvironment, LinePreprocessorConfig } from 'hardhat/types'
 
 import { EndpointId } from '@layerzerolabs/lz-definitions'
 
 import './type-extensions'
+import 'hardhat-preprocessor'
+
+import fs from 'fs'
+
+function getRemappings() {
+    return fs
+        .readFileSync('remappings.txt', 'utf8')
+        .split('\n')
+        .filter(Boolean)
+        .map(line => line.trim().split('='));
+}
+
 
 const MNEMONIC = process.env.MNEMONIC
 const PRIVATE_KEY = process.env.PRIVATE_KEY
@@ -17,8 +29,8 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY
 const accounts: HttpNetworkAccountsUserConfig | undefined = MNEMONIC
     ? { mnemonic: MNEMONIC }
     : PRIVATE_KEY
-      ? [PRIVATE_KEY]
-      : undefined
+        ? [PRIVATE_KEY]
+        : undefined
 
 if (accounts == null) {
     console.warn(
@@ -42,7 +54,9 @@ const config: HardhatUserConfig = {
                 },
             },
         ],
+
     },
+      
     networks: {
         'mainnet': {
             eid: EndpointId.ETHEREUM_MAINNET,
@@ -59,6 +73,7 @@ const config: HardhatUserConfig = {
         },
         hardhat: {
             allowUnlimitedContractSize: true,
+            blockGasLimit: 32000000
         },
     },
     namedAccounts: {
