@@ -60,12 +60,13 @@ const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     console.log(`UUPS proxy deployed at: ${l2ProxyAddress}`)
 
     const kingOFTL2 = await ethers.getContractAt('KingOFTL2', l2ProxyAddress)
+    const initTx = await kingOFTL2.initialize("KingOFTL2", "KING", deployer)
+    await initTx.wait()
+    
     const rateLimit = [[peerNetworkId, ethers.utils.parseEther('100000'), 1]];
     await kingOFTL2.connect(deployer).setInboundRateLimits(rateLimit);
     await kingOFTL2.connect(deployer).setOutboundRateLimits(rateLimit);
-
-    const initTx = await kingOFTL2.initialize("KingOFTL2", "KING", deployer)
-    await initTx.wait()
+   
     await kingOFTL2.connect(deployer).transferOwnership(owner);
     await kingOFTL2.connect(deployer).setDelegate(owner);
     

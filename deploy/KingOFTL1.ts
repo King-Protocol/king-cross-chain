@@ -70,9 +70,10 @@ const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const rateLimit = [[peerNetworkId, ethers.utils.parseEther('100000'), 1]];
     await kingOFTL1.connect(deployer).setInboundRateLimits(rateLimit);
     await kingOFTL1.connect(deployer).setOutboundRateLimits(rateLimit);
+   
+     
     await kingOFTL1.connect(deployer).transferOwnership(owner);
     await kingOFTL1.connect(deployer).setDelegate(owner);
-    
 
     log(
         `Deployment complete: KingOFTL1 proxy is deployed at ${l1ProxyAddress} on network ${network.name}`
