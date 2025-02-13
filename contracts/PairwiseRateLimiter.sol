@@ -203,4 +203,7 @@ abstract contract PairwiseRateLimiter {
         rl.amountInFlight = currentAmountInFlight + _amount;
         rl.lastUpdated = block.timestamp;
     }
+
+    // Reserved storage space to allow for layout changes in the future.
+    uint256[50] private __gap;
 }

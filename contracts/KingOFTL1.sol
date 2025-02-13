@@ -24,7 +24,7 @@ contract KingOFTL1 is OFTAdapterUpgradeable, AccessControlUpgradeable, PausableU
      * @param _owner The contract owner
      * @param _delegate The LZ delegate
      */
-    function initialize(address _owner, address _delegate) external reinitializer(2) {
+    function initialize(address _owner, address _delegate) external initializer {
         __Ownable_init(_owner);
         __OFTAdapter_init(_delegate);
 
