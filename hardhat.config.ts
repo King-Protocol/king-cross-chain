@@ -50,6 +50,7 @@ const config: HardhatUserConfig = {
       
     networks: {
         'mainnet': {
+            chainId: 1,
             eid: EndpointId.ETHEREUM_V2_MAINNET,
             url: process.env.RPC_URL_MAINNET || 'https://eth.drpc.org/',
             accounts,
