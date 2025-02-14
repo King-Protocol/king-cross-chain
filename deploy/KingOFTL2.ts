@@ -2,6 +2,7 @@ import assert from 'assert'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import dotenv from 'dotenv'
+import { EndpointId } from '@layerzerolabs/lz-definitions'
 
 dotenv.config()
 
@@ -12,9 +13,13 @@ const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const { deployer } = await getNamedAccounts()
 
     assert(deployer, 'Missing named deployer account')
+    assert(owner, 'Missing owner account');
 
     const expectedNetworkId = 1923;
-    const peerNetworkId = 1;
+    const peerNetworkEId = EndpointId.ETHEREUM_V2_MAINNET;
+
+    console.log(`Network: ${network.name}`)
+    console.log(`Deployer: ${deployer}`)
 
     if (network.config.chainId !== expectedNetworkId) {
         console.error(
@@ -23,8 +28,7 @@ const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
         return
     }
 
-    console.log(`Network: ${network.name}`)
-    console.log(`Deployer: ${deployer}`)
+   
 
     const endpointV2Deployment = await deployments.get('EndpointV2')
 
@@ -54,6 +58,7 @@ const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
             "0x",
         ],
         log: true,
+        
         skipIfAlreadyDeployed: false,
     })
     const l2ProxyAddress = proxyDeployment.address
@@ -62,13 +67,16 @@ const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const kingOFTL2 = await ethers.getContractAt('KingOFTL2', l2ProxyAddress)
     const initTx = await kingOFTL2.initialize("KingOFTL2", "KING", deployer)
     await initTx.wait()
-    
-    const rateLimit = [[peerNetworkId, ethers.utils.parseEther('100000'), 1]];
-    await kingOFTL2.connect(deployer).setInboundRateLimits(rateLimit);
-    await kingOFTL2.connect(deployer).setOutboundRateLimits(rateLimit);
-   
-    await kingOFTL2.connect(deployer).transferOwnership(owner);
-    await kingOFTL2.connect(deployer).setDelegate(owner);
+    const signer = await ethers.getSigner(deployer)
+    if (!signer) {
+        throw new Error('Deployer signer not found');
+    }
+    const rateLimit = [[peerNetworkEId, ethers.utils.parseEther('100000'), 1]];
+    await kingOFTL2.connect(signer).setInboundRateLimits(rateLimit);
+    await kingOFTL2.connect(signer).setOutboundRateLimits(rateLimit);
+
+    await kingOFTL2.connect(signer).setDelegate(owner);
+    await kingOFTL2.connect(signer).transferOwnership(owner);
     
     log(
         `Deployment complete: KingOFTL2 proxy is deployed at ${l2ProxyAddress} on network ${network.name}`

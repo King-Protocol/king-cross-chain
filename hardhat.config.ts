@@ -14,15 +14,6 @@ import 'hardhat-preprocessor'
 
 import fs from 'fs'
 
-function getRemappings() {
-    return fs
-        .readFileSync('remappings.txt', 'utf8')
-        .split('\n')
-        .filter(Boolean)
-        .map(line => line.trim().split('='));
-}
-
-
 const MNEMONIC = process.env.MNEMONIC
 const PRIVATE_KEY = process.env.PRIVATE_KEY
 
@@ -59,7 +50,7 @@ const config: HardhatUserConfig = {
       
     networks: {
         'mainnet': {
-            eid: EndpointId.ETHEREUM_MAINNET,
+            eid: EndpointId.ETHEREUM_V2_MAINNET,
             url: process.env.RPC_URL_MAINNET || 'https://eth.drpc.org/',
             accounts,
             oftAdapter: {
@@ -67,7 +58,8 @@ const config: HardhatUserConfig = {
             },
         },
         'swell': {
-            eid: EndpointId.SWELL_MAINNET,
+            chainId: 1923,
+            eid: EndpointId.SWELL_V2_MAINNET,
             url: process.env.RPC_URL_SWELL || 'https://rpc.ankr.com/swell/',
             accounts,
         },
