@@ -105,8 +105,10 @@ contract KingOFTL1Test is TestHelperOz5 {
         aToken.mint(userA, initialBalance);
         aOFTAdapter.setTreasury(treasury);
         bOFT.setTreasury(treasury);
-        aOFTAdapter.setFee(1000);
-        bOFT.setFee(1000);
+        aOFTAdapter.setDefaultFeeBps(100);
+        bOFT.setDefaultFeeBps(100);
+        aOFTAdapter.setFeeBps(bEid, 1000, true);
+        bOFT.setFeeBps(aEid, 1000, true);
     }
 
     function test_constructor() public {
