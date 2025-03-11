@@ -83,5 +83,5 @@ const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     );
 }
 
-deploy.tags = ['KingOFTL2']
+deploy.tags = ['deploy']
 export default deploy

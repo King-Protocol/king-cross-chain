@@ -78,4 +78,6 @@ contract KingOFTL1 is OFTAdapterUpgradeable, AccessControlUpgradeable, PausableU
     function revokeRole(bytes32 role, address account) public override onlyOwner {
         _revokeRole(role, account);
     }
+
+    uint256[50] private __gap;
 }
