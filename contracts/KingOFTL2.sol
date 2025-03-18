@@ -109,4 +109,6 @@ contract KingOFTL2 is OFTUpgradeable, AccessControlUpgradeable, PausableUpgradea
             $.slot := ERC20StorageLocation
         }
     }
+
+    uint256[50] private __gap;
 }

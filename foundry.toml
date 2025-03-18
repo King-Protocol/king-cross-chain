@@ -5,6 +5,7 @@ out = 'out'
 test = 'test/foundry'
 cache_path = 'cache/foundry'
 verbosity = 3
+evm_version='shanghai'
 libs = [
     # We provide a set of useful contract utilities
     # in the lib directory of @layerzerolabs/toolbox-foundry:

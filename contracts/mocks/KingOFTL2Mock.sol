@@ -112,4 +112,5 @@ contract KingOFTL2Mock is OFTUpgradeable, AccessControlUpgradeable, PausableUpgr
             $.slot := ERC20StorageLocation
         }
     }
+    uint256[50] private __gap;
 }
