@@ -55,7 +55,11 @@ const config: HardhatUserConfig = {
                 tokenAddress: '0x8F08B70456eb22f6109F57b8fafE862ED28E6040',
             },
             safeConfig: {
+<<<<<<< HEAD
                 safeUrl: 'https://safe-transaction-mainnet.safe.global',
+=======
+                safeUrl: 'https://safe-transaction-mainnet.safe.global/api/api/v1/',
+>>>>>>> c56c292 (feat: arbitrum and base configuration)
                 safeAddress: process.env.MAINNET_OWNER_ADDRESS || '',
             }
         },
@@ -64,10 +68,17 @@ const config: HardhatUserConfig = {
             eid: EndpointId.SWELL_V2_MAINNET,
             url: process.env.RPC_URL_SWELL || 'https://rpc.ankr.com/swell/',
             accounts,
+<<<<<<< HEAD
             // safeConfig: {
             //     safeUrl: '',
             //     safeAddress: process.env.SWELL_OWNER_ADDRESS || '',
             // }
+=======
+            safeConfig: {
+                safeUrl: '',
+                safeAddress: process.env.SWELL_OWNER_ADDRESS || '',
+            }
+>>>>>>> c56c292 (feat: arbitrum and base configuration)
         },
         'arbitrum': {
             chainId: 42161,
@@ -75,7 +86,11 @@ const config: HardhatUserConfig = {
             url: process.env.RPC_URL_ARBITRUM || 'https://arb1.drpc.org/',
             accounts,
             safeConfig: {
+<<<<<<< HEAD
                 safeUrl: 'https://safe-transaction-arbitrum.safe.global',
+=======
+                safeUrl: 'https://safe-transaction-arbitrum.safe.global/api/api/v1',
+>>>>>>> c56c292 (feat: arbitrum and base configuration)
                 safeAddress: process.env.ARBITRUM_OWNER_ADDRESS || '',
             }
         },
@@ -85,7 +100,11 @@ const config: HardhatUserConfig = {
             url: process.env.RPC_URL_BASE || 'https://rpc.ankr.com/8453/',
             accounts,
             safeConfig: {
+<<<<<<< HEAD
                 safeUrl: 'https://safe-transaction-base.safe.global',
+=======
+                safeUrl: 'https://safe-transaction-base.safe.global/api/api/v1/',
+>>>>>>> c56c292 (feat: arbitrum and base configuration)
                 safeAddress: process.env.BASE_OWNER_ADDRESS || '',
             }
         },

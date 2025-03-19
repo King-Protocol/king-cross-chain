@@ -72,7 +72,5 @@ const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     );
 };
 
-
 deploy.tags = ['mainnet'];
-
 export default deploy;

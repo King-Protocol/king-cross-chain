@@ -69,7 +69,5 @@ const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     );
 }
 
-
 deploy.tags = ['swell']
-
 export default deploy

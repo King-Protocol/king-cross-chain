@@ -1,6 +1,7 @@
 import { EndpointId } from '@layerzerolabs/lz-definitions'
 import { ExecutorOptionType } from '@layerzerolabs/lz-v2-utilities'
-import type { OAppEnforcedOption, OAppOmniGraphHardhat, OmniPointHardhat } from '@layerzerolabs/toolbox-hardhat'
+import type { OAppOmniGraphHardhat, OmniPointHardhat } from '@layerzerolabs/toolbox-hardhat'
+
 
 const mainnetContract: OmniPointHardhat = {
   eid: EndpointId.ETHEREUM_V2_MAINNET,
@@ -11,13 +12,12 @@ const swellContract: OmniPointHardhat = {
     contractName: 'KingOFTL2',
 }
 const arbitrumContract: OmniPointHardhat = {
-  eid: EndpointId.ARBITRUM_V2_MAINNET,
-  contractName: 'KingOFTL2',
+    eid: EndpointId.ARBITRUM_V2_MAINNET,
+    contractName: 'KingOFTL2',
 }
-
 const baseContract: OmniPointHardhat = {
-  eid: EndpointId.BASE_V2_MAINNET,
-  contractName: 'KingOFTL2',
+    eid: EndpointId.BASE_V2_MAINNET,
+    contractName: 'KingOFTL2',
 }
 
 const ALL_CONTRACTS = [
@@ -28,64 +28,63 @@ const ALL_CONTRACTS = [
 ]
 
 
-function makeEnforcedOptions(): any {
-  return [
-    {
-      msgType: 1,
-      optionType: ExecutorOptionType.LZ_RECEIVE,
-      gas: 90000,
-      value: 0,
-      index: 0,
-      amount: 0,
-      receiver: "0x0000000000000000000000000000000000000000",
-    },
-    {
-      msgType: 2,
-      optionType: ExecutorOptionType.LZ_RECEIVE,
-      gas: 90000,
-      value: 0,
-      amount: 0,
-      receiver: "0x0000000000000000000000000000000000000000",
-    },
-    {
-      msgType: 2,
-      optionType: ExecutorOptionType.COMPOSE,
-      index: 0,
-      gas: 90000,
-      value: 0,
-      amount: 0,
-      receiver: "0x0000000000000000000000000000000000000000",
-    },
-  ]
+function makeEnforcedOptions() {
+    return [
+        {
+            msgType: 1,
+            optionType: ExecutorOptionType.LZ_RECEIVE,
+            gas: 75000,
+            value: 0,
+        },
+        {
+            msgType: 1,
+            optionType: ExecutorOptionType.NATIVE_DROP,
+            amount: 0,
+            receiver: "0x0000000000000000000000000000000000000000",
+        },
+        {
+            msgType: 2,
+            optionType: ExecutorOptionType.LZ_RECEIVE,
+            gas: 75000,
+            value: 0,
+        },
+        {
+            msgType: 2,
+            optionType: ExecutorOptionType.COMPOSE,
+            index: 0,
+            gas: 75000,
+            value: 0,
+        },
+    ]
 }
 
 function makeReceiveLib(lib: string) {
-  return {
-    receiveLibraryConfig: {
-      receiveLibrary: lib,
-      gracePeriod: BigInt(0),
-    },
-    receiveLibraryTimeoutConfig: {
-      lib,
-      expiry: BigInt(0),
-    },
-  }
+    return {
+        receiveLibraryConfig: {
+            receiveLibrary: lib,
+            gracePeriod: BigInt(0),
+        },
+        receiveLibraryTimeoutConfig: {
+            lib,
+            expiry: BigInt(0),
+        },
+    }
 }
 
 function makeULNConfig(requiredDVNs: string[], optionalDVNs: string[]) {
-  return {
-    confirmations: BigInt(0),
-    requiredDVNs,
-    optionalDVNs,
-    optionalDVNThreshold: 2,
-  }
+    return {
+        confirmations: BigInt(0),
+        requiredDVNs,
+        optionalDVNs,
+        optionalDVNThreshold: 1,
+    }
 }
 
 function makeExecutorConfig(executor: string) {
-  return {
-    maxMessageSize: 10000,
-    executor,
-  }
+    return {
+        maxMessageSize: 10000,
+        executor,
+    }
 }
 
 const MAINNET_OUTBOUND = {
@@ -111,53 +110,63 @@ const SWELL_OUTBOUND = {
 }
 
 const ARBITRUM_OUTBOUND = {
-  sendLibrary: "0x975bcD720be66659e3EB3C0e4F1866a3020E493A",
-  executor: "0x31CAe3B7fB82d847621859fb1585353c5720660D",
-  requiredDVNs: ["0x2f55c492897526677c5b68fb199ea31e2c126416"],
-  optionalDVNs: [
-    "0xa7b5189bca84cd304d8553977c7c614329750d99",
-    "0x19670df5e16bea2ba9b9e68b48c054c5baea06b8",
+  sendLibrary:   "0x5cDc927876031B4Ef910735225c425A7Fc8efed9",
+  executor:      "0x31CAe3B7fB82d847621859fb1585353c5720660D",
+  requiredDVNs:  ["0x2f55c492897526677c5b68fb199ea31e2c126416"], // LZ
+  optionalDVNs:  [
+    "0xa7b5189bca84cd304d8553977c7c614329750d99", // Nethermind
+    "0x19670df5e16bea2ba9b9e68b48c054c5baea06b8", // Horizon
   ],
-  receiveLib: "0x7B9E184e07a6EE1aC23eAe0fe8D6Be2f663f05e6",
+  receiveLib:    "0x7B9E184e07a6EE1aC23eAe0fe8D6Be2f663f05e6",
 }
 
 const BASE_OUTBOUND = {
-  sendLibrary: "0xB5320B0B3a13cC860893E2Bd79FCd7e13484Dda2",
-  executor: "0x2CCA08ae69E0C44b18a57Ab2A87644234dAebaE4",
-  requiredDVNs: ["0x9e059a54699a285714207b43b055483e78faac25"],
-  optionalDVNs: [
-    "0xcd37ca043f8479064e10635020c65ffc005d36f6",
-    "0xa7b5189bca84cd304d8553977c7c614329750d99",
+  sendLibrary:   "0xB5320B0B3a13cC860893E2Bd79FCd7e13484Dda2",
+  executor:      "0x2CCA08ae69E0C44b18a57Ab2A87644234dAebaE4",
+  requiredDVNs:  ["0x9e059a54699a285714207b43b055483e78faac25"], // LZ
+  optionalDVNs:  [
+    "0xcd37ca043f8479064e10635020c65ffc005d36f6", // Nethermind
+    "0xa7b5189bca84cd304d8553977c7c614329750d99", // Horizon
   ],
-  receiveLib: "0xc70AB6f32772f59fBfc23889Caf4Ba3376C84bAf",
+  receiveLib:    "0xc70AB6f32772f59fBfc23889Caf4Ba3376C84bAf",
 }
 
-const PARTIALS: Record<number, Record<number, typeof ARBITRUM_OUTBOUND>> = {
+
+type ChainConfig = {
+  sendLibrary: string
+  executor: string
+  requiredDVNs: string[]
+  optionalDVNs: string[]
+  receiveLib: string
+}
+
+const PARTIALS: Record<number, Record<number, ChainConfig>> = {
   [EndpointId.ETHEREUM_V2_MAINNET]: {
-    //[EndpointId.SWELL_V2_MAINNET]:    MAINNET_OUTBOUND,
+    [EndpointId.SWELL_V2_MAINNET]:    MAINNET_OUTBOUND,
     [EndpointId.ARBITRUM_V2_MAINNET]: MAINNET_OUTBOUND,
-    [EndpointId.BASE_V2_MAINNET]: MAINNET_OUTBOUND,
+    [EndpointId.BASE_V2_MAINNET]:     MAINNET_OUTBOUND,
   },
-  // [EndpointId.SWELL_V2_MAINNET]: {
-  //   [EndpointId.ETHEREUM_V2_MAINNET]: SWELL_OUTBOUND,
-  //   [EndpointId.ARBITRUM_V2_MAINNET]: SWELL_OUTBOUND,
-  //   [EndpointId.BASE_V2_MAINNET]:     SWELL_OUTBOUND,
-  // },
+  [EndpointId.SWELL_V2_MAINNET]: {
+    [EndpointId.ETHEREUM_V2_MAINNET]: SWELL_OUTBOUND,
+    [EndpointId.ARBITRUM_V2_MAINNET]: SWELL_OUTBOUND,
+    [EndpointId.BASE_V2_MAINNET]:     SWELL_OUTBOUND,
+  },
   [EndpointId.ARBITRUM_V2_MAINNET]: {
     [EndpointId.ETHEREUM_V2_MAINNET]: ARBITRUM_OUTBOUND,
-    //[EndpointId.SWELL_V2_MAINNET]:    ARBITRUM_OUTBOUND,
+    [EndpointId.SWELL_V2_MAINNET]:    ARBITRUM_OUTBOUND,
     [EndpointId.BASE_V2_MAINNET]:     ARBITRUM_OUTBOUND,
   },
   [EndpointId.BASE_V2_MAINNET]: {
-    [EndpointId.ARBITRUM_V2_MAINNET]: BASE_OUTBOUND,
     [EndpointId.ETHEREUM_V2_MAINNET]: BASE_OUTBOUND,
-    //[EndpointId.SWELL_V2_MAINNET]:    BASE_OUTBOUND,
+    [EndpointId.SWELL_V2_MAINNET]:    BASE_OUTBOUND,
+    [EndpointId.ARBITRUM_V2_MAINNET]: BASE_OUTBOUND,
   },
 }
 
-
-
-function buildConnection(from: OmniPointHardhat, to: OmniPointHardhat) {
+function buildConnection(
+  from: OmniPointHardhat,
+  to:   OmniPointHardhat,
+) {
   const partial = PARTIALS[from.eid]?.[to.eid]
   if (!partial) return undefined
 
@@ -166,8 +175,7 @@ function buildConnection(from: OmniPointHardhat, to: OmniPointHardhat) {
     to,
     config: {
       sendLibrary: partial.sendLibrary,
-      receiveLibraryConfig: makeReceiveLib(partial.receiveLib).receiveLibraryConfig,
-      receiveLibraryTimeoutConfig: makeReceiveLib(partial.receiveLib).receiveLibraryTimeoutConfig,
+      ...makeReceiveLib(partial.receiveLib),
       sendConfig: {
         executorConfig: makeExecutorConfig(partial.executor),
         ulnConfig: makeULNConfig(partial.requiredDVNs, partial.optionalDVNs),
@@ -181,9 +189,9 @@ function buildConnection(from: OmniPointHardhat, to: OmniPointHardhat) {
 }
 
 const allPairs: [OmniPointHardhat, OmniPointHardhat][] = [
+  [mainnetContract, swellContract],
   [mainnetContract, arbitrumContract],
   [mainnetContract, baseContract],
-  [mainnetContract, swellContract],
 
   [swellContract, mainnetContract],
   [swellContract, arbitrumContract],
@@ -200,11 +208,11 @@ const allPairs: [OmniPointHardhat, OmniPointHardhat][] = [
 
 const connections = allPairs
   .map(([f, t]) => buildConnection(f, t))
-  .filter((connection): connection is NonNullable<typeof connection> => connection !== undefined)
+  .filter(Boolean)
 
 const config: OAppOmniGraphHardhat = {
   contracts: ALL_CONTRACTS.map(contract => ({ contract })),
-  connections: connections,
+  connections: connections as any,
 }
 
 export default config
