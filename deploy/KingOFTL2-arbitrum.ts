@@ -2,11 +2,10 @@ import assert from 'assert'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import dotenv from 'dotenv'
-import { EndpointId } from '@layerzerolabs/lz-definitions'
 
 dotenv.config()
 
-const owner = process.env.L2_OWNER_ADDRESS
+const owner = process.env.SWELL_OWNER_ADDRESS
 const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const { getNamedAccounts, deployments, ethers, network } = hre
     const { deploy, log } = deployments
@@ -15,8 +14,7 @@ const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     assert(deployer, 'Missing named deployer account')
     assert(owner, 'Missing owner account');
 
-    const expectedNetworkId = 1923;
-    const peerNetworkEId = EndpointId.ETHEREUM_V2_MAINNET;
+    const expectedNetworkId = 42161;
 
     console.log(`Network: ${network.name}`)
     console.log(`Deployer: ${deployer}`)
@@ -27,8 +25,6 @@ const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
         )
         return
     }
-
-   
 
     const endpointV2Deployment = await deployments.get('EndpointV2')
 
@@ -67,21 +63,11 @@ const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const kingOFTL2 = await ethers.getContractAt('KingOFTL2', l2ProxyAddress)
     const initTx = await kingOFTL2.initialize("King Protocol", "KING", deployer)
     await initTx.wait()
-    const signer = await ethers.getSigner(deployer)
-    if (!signer) {
-        throw new Error('Deployer signer not found');
-    }
-    const rateLimit = [[peerNetworkEId, ethers.utils.parseEther('100000'), 1]];
-    await kingOFTL2.connect(signer).setInboundRateLimits(rateLimit);
-    await kingOFTL2.connect(signer).setOutboundRateLimits(rateLimit);
-
-    await kingOFTL2.connect(signer).setDelegate(owner);
-    await kingOFTL2.connect(signer).transferOwnership(owner);
     
     log(
         `Deployment complete: KingOFTL2 proxy is deployed at ${l2ProxyAddress} on network ${network.name}`
     );
 }
 
-deploy.tags = ['KingOFTL2']
+deploy.tags = ['arbitrum']
 export default deploy
