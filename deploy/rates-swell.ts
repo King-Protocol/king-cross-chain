@@ -3,11 +3,11 @@ import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import dotenv from 'dotenv'
 import { EndpointId } from '@layerzerolabs/lz-definitions'
-const kingOFTL2Address = require('../deployment/base/KingOFT1.json').address;
 dotenv.config()
 
 const owner = process.env.SWELL_OWNER_ADDRESS
 const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
+    const kingOFTL2Address = require('../deployments/base/UUPS.json').address;
     const { getNamedAccounts, deployments, ethers, network } = hre
     const { deploy, log } = deployments
     const { deployer } = await getNamedAccounts()
@@ -49,8 +49,8 @@ const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
         await kingOFTL2.connect(signer).setOutboundRateLimits(rateLimit);
     }
 
-    await kingOFTL2.connect(signer).setDelegate(owner);
-    await kingOFTL2.connect(signer).transferOwnership(owner);
+    // await kingOFTL2.connect(signer).setDelegate(owner);
+    // await kingOFTL2.connect(signer).transferOwnership(owner);
 };
 
 deploy.tags = ['rates-base']

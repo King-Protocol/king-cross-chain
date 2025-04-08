@@ -56,10 +56,14 @@ const config: HardhatUserConfig = {
             },
             safeConfig: {
 <<<<<<< HEAD
+<<<<<<< HEAD
                 safeUrl: 'https://safe-transaction-mainnet.safe.global',
 =======
                 safeUrl: 'https://safe-transaction-mainnet.safe.global/api/api/v1/',
 >>>>>>> c56c292 (feat: arbitrum and base configuration)
+=======
+                safeUrl: 'https://safe-transaction-mainnet.safe.global',
+>>>>>>> 65db68e (feat: manual swell wiring)
                 safeAddress: process.env.MAINNET_OWNER_ADDRESS || '',
             }
         },
@@ -69,16 +73,22 @@ const config: HardhatUserConfig = {
             url: process.env.RPC_URL_SWELL || 'https://rpc.ankr.com/swell/',
             accounts,
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 65db68e (feat: manual swell wiring)
             // safeConfig: {
             //     safeUrl: '',
             //     safeAddress: process.env.SWELL_OWNER_ADDRESS || '',
             // }
+<<<<<<< HEAD
 =======
             safeConfig: {
                 safeUrl: '',
                 safeAddress: process.env.SWELL_OWNER_ADDRESS || '',
             }
 >>>>>>> c56c292 (feat: arbitrum and base configuration)
+=======
+>>>>>>> 65db68e (feat: manual swell wiring)
         },
         'arbitrum': {
             chainId: 42161,
@@ -87,10 +97,14 @@ const config: HardhatUserConfig = {
             accounts,
             safeConfig: {
 <<<<<<< HEAD
+<<<<<<< HEAD
                 safeUrl: 'https://safe-transaction-arbitrum.safe.global',
 =======
                 safeUrl: 'https://safe-transaction-arbitrum.safe.global/api/api/v1',
 >>>>>>> c56c292 (feat: arbitrum and base configuration)
+=======
+                safeUrl: 'https://safe-transaction-arbitrum.safe.global',
+>>>>>>> 65db68e (feat: manual swell wiring)
                 safeAddress: process.env.ARBITRUM_OWNER_ADDRESS || '',
             }
         },
@@ -101,10 +115,14 @@ const config: HardhatUserConfig = {
             accounts,
             safeConfig: {
 <<<<<<< HEAD
+<<<<<<< HEAD
                 safeUrl: 'https://safe-transaction-base.safe.global',
 =======
                 safeUrl: 'https://safe-transaction-base.safe.global/api/api/v1/',
 >>>>>>> c56c292 (feat: arbitrum and base configuration)
+=======
+                safeUrl: 'https://safe-transaction-base.safe.global',
+>>>>>>> 65db68e (feat: manual swell wiring)
                 safeAddress: process.env.BASE_OWNER_ADDRESS || '',
             }
         },
