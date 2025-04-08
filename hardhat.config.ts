@@ -2,18 +2,15 @@ import 'dotenv/config'
 
 import 'hardhat-deploy'
 import 'hardhat-contract-sizer'
-import '@nomiclabs/hardhat-ethers'
+
 import '@layerzerolabs/toolbox-hardhat'
 import '@nomicfoundation/hardhat-chai-matchers'
 import { HardhatUserConfig, HttpNetworkAccountsUserConfig, HardhatRuntimeEnvironment, LinePreprocessorConfig } from 'hardhat/types'
 
 import { EndpointId } from '@layerzerolabs/lz-definitions'
-
 import './type-extensions'
 import 'hardhat-preprocessor'
-
-import fs from 'fs'
-
+import '@nomiclabs/hardhat-ethers'
 const MNEMONIC = process.env.MNEMONIC
 const PRIVATE_KEY = process.env.PRIVATE_KEY
 
@@ -58,7 +55,7 @@ const config: HardhatUserConfig = {
                 tokenAddress: '0x8F08B70456eb22f6109F57b8fafE862ED28E6040',
             },
             safeConfig: {
-                safeUrl: 'https://safe-transaction-mainnet.safe.global/api/api/v1/',
+                safeUrl: 'https://safe-transaction-mainnet.safe.global',
                 safeAddress: process.env.MAINNET_OWNER_ADDRESS || '',
             }
         },
@@ -67,10 +64,10 @@ const config: HardhatUserConfig = {
             eid: EndpointId.SWELL_V2_MAINNET,
             url: process.env.RPC_URL_SWELL || 'https://rpc.ankr.com/swell/',
             accounts,
-            safeConfig: {
-                safeUrl: '',
-                safeAddress: process.env.SWELL_OWNER_ADDRESS || '',
-            }
+            // safeConfig: {
+            //     safeUrl: '',
+            //     safeAddress: process.env.SWELL_OWNER_ADDRESS || '',
+            // }
         },
         'arbitrum': {
             chainId: 42161,
@@ -78,7 +75,7 @@ const config: HardhatUserConfig = {
             url: process.env.RPC_URL_ARBITRUM || 'https://arb1.drpc.org/',
             accounts,
             safeConfig: {
-                safeUrl: 'https://safe-transaction-arbitrum.safe.global/api/api/v1',
+                safeUrl: 'https://safe-transaction-arbitrum.safe.global',
                 safeAddress: process.env.ARBITRUM_OWNER_ADDRESS || '',
             }
         },
@@ -88,7 +85,7 @@ const config: HardhatUserConfig = {
             url: process.env.RPC_URL_BASE || 'https://rpc.ankr.com/8453/',
             accounts,
             safeConfig: {
-                safeUrl: 'https://safe-transaction-base.safe.global/api/api/v1/',
+                safeUrl: 'https://safe-transaction-base.safe.global',
                 safeAddress: process.env.BASE_OWNER_ADDRESS || '',
             }
         },

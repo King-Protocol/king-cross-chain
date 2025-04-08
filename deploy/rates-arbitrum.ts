@@ -3,11 +3,12 @@ import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import dotenv from 'dotenv'
 import { EndpointId } from '@layerzerolabs/lz-definitions'
-const kingOFTL2Address = require('../deployment/base/KingOFT1.json').address;
+
 dotenv.config()
 
 const owner = process.env.ARBITRUM_OWNER_ADDRESS
 const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
+    const kingOFTL2Address = require('../deployments/arbitrum/UUPS.json').address;
     const { getNamedAccounts, deployments, ethers, network } = hre
     const { deployer } = await getNamedAccounts()
     const { log } = deployments;
@@ -15,7 +16,8 @@ const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     assert(owner, 'Missing owner account');
 
     const expectedNetworkId = 42161;
-    const peerNetworkEIds = [EndpointId.ETHEREUM_V2_MAINNET, EndpointId.SWELL_V2_MAINNET, EndpointId.BASE_V2_MAINNET];
+    // const peerNetworkEIds = [EndpointId.ETHEREUM_V2_MAINNET, EndpointId.SWELL_V2_MAINNET, EndpointId.BASE_V2_MAINNET];
+    const peerNetworkEIds = [EndpointId.ETHEREUM_V2_MAINNET, EndpointId.BASE_V2_MAINNET];
     log(`Network: ${network.name}`)
     log(`Deployer: ${deployer}`)
 
@@ -42,11 +44,10 @@ const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     }
     // const rateLimit = [[peerNetworkEId, ethers.utils.parseEther('100000'), 1]];
     const rateLimits = peerNetworkEIds.map((peerNetworkEId) => [peerNetworkEId, ethers.utils.parseEther('100000'), 1]);
-    
-    for (const rateLimit of rateLimits) {
-        await kingOFTL2.connect(signer).setInboundRateLimits(rateLimit);
-        await kingOFTL2.connect(signer).setOutboundRateLimits(rateLimit);
-    }
+
+    await kingOFTL2.connect(signer).setInboundRateLimits(rateLimits);
+    await kingOFTL2.connect(signer).setOutboundRateLimits(rateLimits);
+
     await kingOFTL2.connect(signer).setDelegate(owner);
     await kingOFTL2.connect(signer).transferOwnership(owner);
 };

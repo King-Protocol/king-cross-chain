@@ -3,13 +3,14 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import assert from 'assert';
 import dotenv from 'dotenv';
 import { EndpointId } from '@layerzerolabs/lz-definitions';
-const kingOFTL1Address = require('../deployment/mainnet/KingOFT1.json').address;
+
 
 dotenv.config();
 
 const owner = process.env.MAINNET_OWNER_ADDRESS;
 
 const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
+    const kingOFTL1Address = require('../deployments/mainnet/UUPS.json').address;
     const { deployments, getNamedAccounts, ethers, network } = hre;
     const { log } = deployments;
     const { deployer } = await getNamedAccounts();
@@ -18,8 +19,8 @@ const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     assert(owner, 'Missing owner account');
 
     const expectedNetworkId = 1;
-    const peerNetworkEIds = [EndpointId.ARBITRUM_V2_MAINNET, EndpointId.SWELL_V2_MAINNET, EndpointId.BASE_V2_MAINNET];
-
+    // const peerNetworkEIds = [EndpointId.ARBITRUM_V2_MAINNET, EndpointId.SWELL_V2_MAINNET, EndpointId.BASE_V2_MAINNET];
+    const peerNetworkEIds = [EndpointId.ARBITRUM_V2_MAINNET,  EndpointId.BASE_V2_MAINNET];
     log(`Network: ${network.name}`);
     log(`Deployer: ${deployer}`);
 
@@ -50,8 +51,8 @@ const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
         await kingOFTL1.connect(signer).setOutboundRateLimits(rateLimit);
     }
 
-    await kingOFTL1.connect(signer).setDelegate(owner);
-    await kingOFTL1.connect(signer).transferOwnership(owner);
+    // await kingOFTL1.connect(signer).setDelegate(owner);
+    // await kingOFTL1.connect(signer).transferOwnership(owner);
     
 };
 
