@@ -77,14 +77,8 @@ async function main() {
     };
 
     const signatureFull = await signer._signTypedData(domain, types, message);
-    const sig = ethers.utils.splitSignature(signatureFull);
+    const packedSignature = ethers.utils.joinSignature(signatureFull);
 
-    const packedSignature = ethers.utils.hexConcat([
-      sig.r,
-      sig.s,
-      ethers.utils.hexlify(sig.v),
-      ethers.utils.hexZeroPad(signer.address, 32)
-    ]);
 
     const txResponse = await safeContract.execTransaction(
       message.to,
