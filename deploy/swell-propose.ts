@@ -11,7 +11,7 @@ dotenv.config()
 
 const owner = process.env.SWELL_OWNER_ADDRESS
 const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-    const kingOFTL2Address = require('../deployments/base/UUPS.json').address;
+    const kingOFTL2Address = require('../deployments/swell/UUPS.json').address;
     const { getNamedAccounts, deployments, ethers, network } = hre
     const { deploy, log } = deployments
     const { deployer } = await getNamedAccounts()
