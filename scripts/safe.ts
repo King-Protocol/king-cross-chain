@@ -6,7 +6,8 @@ import "dotenv/config";
 
 const gnosisSafeAbi = [
   "function nonce() public view returns (uint256)",
-  "function execTransaction(address,uint256,bytes,uint8,uint256,uint256,uint256,address,address,bytes) external payable returns (bool success)"
+  "function execTransaction(address,uint256,bytes,uint8,uint256,uint256,uint256,address,address,bytes) external payable returns (bool success)",
+  "function getThreshold() public view returns (uint256)"
 ];
 
 interface TxItem {
@@ -31,23 +32,38 @@ interface SafeTx {
 async function main() {
   const jsonStr = readFileSync(join(__dirname, "data.json"), "utf8");
   const txArray: TxItem[] = JSON.parse(jsonStr);
-
   const [signer] = await ethers.getSigners();
+  
   const safeAddress = process.env.SWELL_OWNER_ADDRESS || "";
+  if (!safeAddress) {
+    throw new Error("Safe address not found in environment variables");
+  }
+  
+  console.log("Using signer address:", await signer.getAddress());
+  console.log("Safe address:", safeAddress);
+  
   const safeContract = new Contract(safeAddress, gnosisSafeAbi, signer);
-
+  
+  const threshold = await safeContract.getThreshold();
+  console.log(`Safe threshold: ${threshold.toString()}`);
+  
+  if (threshold.toNumber() > 1) {
+    console.warn("WARNING: This Safe requires multiple signatures but this script only provides one");
+  }
+  
   for (let i = 0; i < txArray.length; i++) {
     const { destination, calldata, description } = txArray[i];
-
     console.log("\n========== Transaction #" + (i + 1) + " ==========");
     if (description) console.log("Description: " + description);
     console.log("Destination: " + destination);
-    console.log("Calldata:   " + calldata);
-
+    console.log("Calldata: " + calldata);
+    
     const currentNonce: BigNumber = await safeContract.nonce();
+    console.log("Current Safe nonce:", currentNonce.toString());
+    
     const chainId = (await signer.provider!.getNetwork()).chainId;
-
     const domain = { chainId, verifyingContract: safeAddress };
+    
     const types = {
       SafeTx: [
         { type: "address", name: "to" },
@@ -62,7 +78,7 @@ async function main() {
         { type: "uint256", name: "nonce" }
       ]
     };
-
+    
     const message: SafeTx = {
       to: destination,
       value: 0,
@@ -75,28 +91,48 @@ async function main() {
       refundReceiver: ethers.constants.AddressZero,
       nonce: currentNonce.toNumber()
     };
-
-    const signatureFull = await signer._signTypedData(domain, types, message);
-    const packedSignature = ethers.utils.joinSignature(signatureFull);
-
-
-    const txResponse = await safeContract.execTransaction(
-      message.to,
-      message.value,
-      message.data,
-      message.operation,
-      message.safeTxGas,
-      message.baseGas,
-      message.gasPrice,
-      message.gasToken,
-      message.refundReceiver,
-      packedSignature,
-      { gasLimit: 3_000_000 }
+    
+    const signatureObject = await signer._signTypedData(domain, types, message);
+    const { r, s, v } = ethers.utils.splitSignature(signatureObject);
+    
+    const signatureBytes = ethers.utils.solidityPack(
+      ['bytes'],
+      [ethers.utils.hexConcat([
+        ethers.utils.hexZeroPad(r, 32),
+        ethers.utils.hexZeroPad(s, 32),
+        ethers.utils.hexZeroPad(ethers.utils.hexlify(v), 1)
+      ])]
     );
-
-    console.log("Submitted tx: " + txResponse.hash);
-    const receipt = await txResponse.wait();
-    console.log("Mined block=" + receipt.blockNumber + ", status=" + receipt.status);
+    
+    console.log("Signature bytes:", signatureBytes);
+    
+    try {
+      const txResponse = await safeContract.execTransaction(
+        message.to,
+        message.value,
+        message.data,
+        message.operation,
+        message.safeTxGas,
+        message.baseGas,
+        message.gasPrice,
+        message.gasToken,
+        message.refundReceiver,
+        signatureBytes,
+        { gasLimit: 3_000_000 }
+      );
+      
+      console.log("Submitted tx: " + txResponse.hash);
+      const receipt = await txResponse.wait();
+      console.log("Mined block=" + receipt.blockNumber + ", status=" + receipt.status);
+    } catch (error) {
+      console.error("Transaction execution failed:", error);
+      
+      if (error.data) {
+        console.error("Error data:", error.data);
+      }
+      
+      console.log("Continuing with next transaction...");
+    }
   }
 }
 
