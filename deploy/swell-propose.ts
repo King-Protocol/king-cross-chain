@@ -97,6 +97,13 @@ const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
             description: "kingOFTL2 setOutboundRateLimits",
         });
 
+        tx  = await kingOFTL2.populateTransaction.setDelegate(owner);
+        transactions.push({
+            destination: kingOFTL2Address,
+            calldata: tx.data,
+            description: "kingOFTL2 setDelegate",
+        });
+
         // 2. endpointV2.setSendLibrary calls
         tx = await endpointV2.populateTransaction.setSendLibrary(
             "0xc2606AADe4bdd978a4fa5a6edb3b66657acEe6F8",
