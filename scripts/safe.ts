@@ -31,17 +31,22 @@ interface SafeTx {
 async function main() {
   const jsonStr = readFileSync(join(__dirname, "data.json"), "utf8");
   const txArray: TxItem[] = JSON.parse(jsonStr);
+
   const [signer] = await ethers.getSigners();
   const safeAddress = process.env.SWELL_OWNER_ADDRESS || "";
   const safeContract = new Contract(safeAddress, gnosisSafeAbi, signer);
+
   for (let i = 0; i < txArray.length; i++) {
     const { destination, calldata, description } = txArray[i];
+
     console.log("\n========== Transaction #" + (i + 1) + " ==========");
     if (description) console.log("Description: " + description);
     console.log("Destination: " + destination);
     console.log("Calldata:   " + calldata);
+
     const currentNonce: BigNumber = await safeContract.nonce();
     const chainId = (await signer.provider!.getNetwork()).chainId;
+
     const domain = { chainId, verifyingContract: safeAddress };
     const types = {
       SafeTx: [
@@ -57,6 +62,7 @@ async function main() {
         { type: "uint256", name: "nonce" }
       ]
     };
+
     const message: SafeTx = {
       to: destination,
       value: 0,
@@ -69,15 +75,17 @@ async function main() {
       refundReceiver: ethers.constants.AddressZero,
       nonce: currentNonce.toNumber()
     };
-    console.log("Safe nonce:  " + currentNonce.toString());
+
     const signatureFull = await signer._signTypedData(domain, types, message);
     const sig = ethers.utils.splitSignature(signatureFull);
+
     const packedSignature = ethers.utils.hexConcat([
       sig.r,
       sig.s,
-      ethers.utils.hexlify(sig.v)
+      ethers.utils.hexlify(sig.v),
+      ethers.utils.hexZeroPad(signer.address, 32)
     ]);
-    console.log("Signature:   " + packedSignature);
+
     const txResponse = await safeContract.execTransaction(
       message.to,
       message.value,
@@ -89,8 +97,9 @@ async function main() {
       message.gasToken,
       message.refundReceiver,
       packedSignature,
-      { gasLimit: 3000000 }
+      { gasLimit: 3_000_000 }
     );
+
     console.log("Submitted tx: " + txResponse.hash);
     const receipt = await txResponse.wait();
     console.log("Mined block=" + receipt.blockNumber + ", status=" + receipt.status);
