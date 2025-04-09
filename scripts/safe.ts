@@ -78,17 +78,20 @@ async function main() {
         { type: "uint256", name: "nonce" }
       ]
     };
-    
-    const message: SafeTx = {
+    const gasPrice = await signer.getGasPrice();
+    const baseGas = 21000;
+    const refundReceiver = await signer.getAddress();
+
+    let message: SafeTx = {
       to: destination,
       value: 0,
       data: calldata,
       operation: 0,
       safeTxGas: 0,
-      baseGas: 0,
-      gasPrice: 0,
+      baseGas,
+      gasPrice: gasPrice.toNumber(),
       gasToken: ethers.constants.AddressZero,
-      refundReceiver: ethers.constants.AddressZero,
+      refundReceiver,
       nonce: currentNonce.toNumber()
     };
     
@@ -104,7 +107,24 @@ async function main() {
       ])]
     );
     
-    console.log("Signature bytes:", signatureBytes);
+    const estimatedSafeTxGas = await safeContract.estimateGas.execTransaction(
+      message.to,
+      message.value,
+      message.data,
+      message.operation,
+      0,
+      baseGas,
+      gasPrice,
+      message.gasToken,
+      message.refundReceiver,
+      signatureBytes
+    );
+    
+    message = {
+      ...message,
+      safeTxGas: estimatedSafeTxGas.toNumber()
+    };
+    
     
     try {
       const txResponse = await safeContract.execTransaction(
