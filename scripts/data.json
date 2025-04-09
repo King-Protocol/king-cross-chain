@@ -1,8 +1,8 @@
 [
-  {
+    {
     "destination": "0xE22C243c7559C667a1EB94B593369D192c5fbac0",
     "calldata": "0xca5eb5e10000000000000000000000008d9fF30f8ecBA197fE9492A0fD92310D75d352B9",
-    "description": "kingOFTL2 setDelegate for chain 30110"
+    "description": "kingOFTL2 setDelegate"
   },
   {
     "destination": "0xE22C243c7559C667a1EB94B593369D192c5fbac0",
