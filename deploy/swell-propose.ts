@@ -68,11 +68,7 @@ const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
             description: "kingOFTL2 setPeers for chain 30110",
         });
 
-<<<<<<< HEAD
-
-=======
     
->>>>>>> 65db68e (feat: manual swell wiring)
         tx = await kingOFTL2.populateTransaction.setPeer(
             30184,
             "0x000000000000000000000000e22c243c7559c667a1eb94b593369d192c5fbac0"
@@ -101,16 +97,13 @@ const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
             description: "kingOFTL2 setOutboundRateLimits",
         });
 
-<<<<<<< HEAD
-        tx = await kingOFTL2.populateTransaction.setDelegate(owner);
+        tx  = await kingOFTL2.populateTransaction.setDelegate(owner);
         transactions.push({
             destination: kingOFTL2Address,
             calldata: tx.data,
             description: "kingOFTL2 setDelegate",
         });
 
-=======
->>>>>>> 65db68e (feat: manual swell wiring)
         // 2. endpointV2.setSendLibrary calls
         tx = await endpointV2.populateTransaction.setSendLibrary(
             "0xc2606AADe4bdd978a4fa5a6edb3b66657acEe6F8",
