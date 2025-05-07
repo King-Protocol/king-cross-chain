@@ -33,7 +33,7 @@ function makeEnforcedOptions(): any {
     {
       msgType: 1,
       optionType: ExecutorOptionType.LZ_RECEIVE,
-      gas: 65000,
+      gas: 90000,
       value: 0,
       index: 0,
       amount: 0,
@@ -42,7 +42,7 @@ function makeEnforcedOptions(): any {
     {
       msgType: 2,
       optionType: ExecutorOptionType.LZ_RECEIVE,
-      gas: 65000,
+      gas: 90000,
       value: 0,
       amount: 0,
       receiver: "0x0000000000000000000000000000000000000000",
@@ -51,7 +51,7 @@ function makeEnforcedOptions(): any {
       msgType: 2,
       optionType: ExecutorOptionType.COMPOSE,
       index: 0,
-      gas: 65000,
+      gas: 90000,
       value: 0,
       amount: 0,
       receiver: "0x0000000000000000000000000000000000000000",
