@@ -68,7 +68,7 @@ const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
             description: "kingOFTL2 setPeers for chain 30110",
         });
 
-    
+
         tx = await kingOFTL2.populateTransaction.setPeer(
             30184,
             "0x000000000000000000000000e22c243c7559c667a1eb94b593369d192c5fbac0"
@@ -97,7 +97,7 @@ const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
             description: "kingOFTL2 setOutboundRateLimits",
         });
 
-        tx  = await kingOFTL2.populateTransaction.setDelegate(owner);
+        tx = await kingOFTL2.populateTransaction.setDelegate(owner);
         transactions.push({
             destination: kingOFTL2Address,
             calldata: tx.data,
@@ -246,15 +246,24 @@ const deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
             calldata: tx.data,
             description: "endpointV2 setConfig (second call)",
         });
-
-        // 7. kingOFTL2.setEnforcedOptions call
-        tx = await kingOFTL2.populateTransaction.setEnforcedOptions([
-            [30110, 1, "0x0003010011010000000000000000000000000000fde8"],
-            [30110, 2, "0x0003010011010000000000000000000000000000fde80100130300000000000000000000000000000000fde8"],
+        [
+            [30101, 1, "0x00030100110100000000000000000000000000015f90"],
+            [30101, 2, "0x00030100110100000000000000000000000000015f9001001303000000000000000000000000000000015f90"],
             [30184, 1, "0x0003010011010000000000000000000000000000fde8"],
             [30184, 2, "0x0003010011010000000000000000000000000000fde80100130300000000000000000000000000000000fde8"],
-            [30101, 1, "0x0003010011010000000000000000000000000000fde8"],
-            [30101, 2, "0x0003010011010000000000000000000000000000fde80100130300000000000000000000000000000000fde8"]
+            [30335, 1, "0x0003010011010000000000000000000000000000fde8"],
+            [30335, 2, "0x0003010011010000000000000000000000000000fde80100130300000000000000000000000000000000fde8"]
+        ]
+        // 7. kingOFTL2.setEnforcedOptions call
+        tx = await kingOFTL2.populateTransaction.setEnforcedOptions([
+
+            [30101, 1, "0x00030100110100000000000000000000000000015f90"],
+            [30101, 2, "0x00030100110100000000000000000000000000015f9001001303000000000000000000000000000000015f90"],
+            [30184, 1, "0x0003010011010000000000000000000000000000fde8"],
+            [30184, 2, "0x0003010011010000000000000000000000000000fde80100130300000000000000000000000000000000fde8"],
+            [30110, 1, "0x0003010011010000000000000000000000000000fde8"],
+            [30110, 2, "0x0003010011010000000000000000000000000000fde80100130300000000000000000000000000000000fde8"]
+
         ]);
         transactions.push({
             destination: kingOFTL2Address,
