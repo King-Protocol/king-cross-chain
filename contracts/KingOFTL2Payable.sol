@@ -26,7 +26,7 @@ contract KingOFTL2Payable is KingOFTL2, IFee {
         uint256 _fee = getFee(_dstEid, _amountLD);
         if (_fee > 0) {
             _amountLD -= _fee;
-            transferFrom(msg.sender, treasury, _fee);
+            _transfer(msg.sender, treasury, _fee);
         }
         return super._debit(_amountLD, _minAmountLD, _dstEid);
     }
