@@ -41,7 +41,7 @@ contract KingOFTL1PayableMock is KingOFTL1Mock, IFee{
      /**
      * @dev Sets the default fee basis points (BPS) for all destinations.
      */
-    function setDefaultFeeBps(uint16 _feeBps) external {
+    function setDefaultFeeBps(uint16 _feeBps) external onlyOwner {
         if (treasury == address(0)) {
             revert TreasuryNotSet();
         }
@@ -53,7 +53,7 @@ contract KingOFTL1PayableMock is KingOFTL1Mock, IFee{
     /**
      * @dev Sets the fee basis points (BPS) for a specific destination LayerZero EndpointV2 ID.
      */
-    function setFeeBps(uint32 _dstEid, uint16 _feeBps, bool _enabled) external {
+    function setFeeBps(uint32 _dstEid, uint16 _feeBps, bool _enabled) external onlyOwner {
         if (treasury == address(0)) {
             revert TreasuryNotSet();
         }
