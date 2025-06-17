@@ -7,6 +7,7 @@ import { IFee} from "../interfaces/IFee.sol";
 // @dev WARNING: This is for testing purposes only
 contract KingOFTL1PayableMock is KingOFTL1Mock, IFee{
     uint16 public constant BPS_DENOMINATOR = 10_000;
+    uint16 public constant MAX_FEE_BPS = 500;
     uint16 public defaultFeeBps;
     
     address public treasury;
@@ -45,7 +46,7 @@ contract KingOFTL1PayableMock is KingOFTL1Mock, IFee{
         if (treasury == address(0)) {
             revert TreasuryNotSet();
         }
-        if (_feeBps > BPS_DENOMINATOR) revert IFee.InvalidBps();
+        if (_feeBps > MAX_FEE_BPS) revert IFee.InvalidBps();
         defaultFeeBps = _feeBps;
         emit DefaultFeeBpsSet(_feeBps);
     }
@@ -57,7 +58,7 @@ contract KingOFTL1PayableMock is KingOFTL1Mock, IFee{
         if (treasury == address(0)) {
             revert TreasuryNotSet();
         }
-        if (_feeBps > BPS_DENOMINATOR) revert IFee.InvalidBps();
+        if (_feeBps > MAX_FEE_BPS) revert IFee.InvalidBps();
         feeBps[_dstEid] = FeeConfig(_feeBps, _enabled);
         emit FeeBpsSet(_dstEid, _feeBps, _enabled);
     }
