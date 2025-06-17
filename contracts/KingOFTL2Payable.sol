@@ -23,7 +23,6 @@ contract KingOFTL2Payable is KingOFTL2, IFee {
         uint256 _minAmountLD,
         uint32 _dstEid
     ) internal virtual override whenNotPaused returns (uint256, uint256) {
-        _checkAndUpdateOutboundRateLimit(_dstEid, _amountLD);
         uint256 _fee = getFee(_dstEid, _amountLD);
         if (_fee > 0) {
             _amountLD -= _fee;
