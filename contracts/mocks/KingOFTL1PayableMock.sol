@@ -15,9 +15,6 @@ contract KingOFTL1PayableMock is KingOFTL1Mock, IFee{
 
     constructor(address _token, address _lzEndpoint, address _delegate) KingOFTL1Mock(_token, _lzEndpoint, _delegate) {}
 
-    error TreasuryNotSet();
-    error NullAddress();
-
     function _debit(
         uint256 _amountLD,
         uint256 _minAmountLD,

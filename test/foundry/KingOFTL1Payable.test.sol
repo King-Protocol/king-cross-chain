@@ -107,8 +107,8 @@ contract KingOFTL1Test is TestHelperOz5 {
         bOFT.setTreasury(treasury);
         aOFTAdapter.setDefaultFeeBps(100);
         bOFT.setDefaultFeeBps(100);
-        aOFTAdapter.setFeeBps(bEid, 1000, true);
-        bOFT.setFeeBps(aEid, 1000, true);
+        aOFTAdapter.setFeeBps(bEid, 500, true);
+        bOFT.setFeeBps(aEid, 500, true);
     }
 
     function test_constructor() public {
@@ -126,7 +126,7 @@ contract KingOFTL1Test is TestHelperOz5 {
     function test_send_oft_adapter() public {
         uint256 tokensToSend = 1 ether;
         bytes memory options = OptionsBuilder.newOptions().addExecutorLzReceiveOption(200000, 0);
-        uint256 _fee = (tokensToSend * 1000) / 10000;
+        uint256 _fee = (tokensToSend * 500) / 10000;
         SendParam memory sendParam = SendParam(
             bEid,
             addressToBytes32(userB),
@@ -160,7 +160,7 @@ contract KingOFTL1Test is TestHelperOz5 {
 
         SendData memory data;
         data.tokensToSend = 1 ether;
-        data.fee = (data.tokensToSend * 1000) / 10000;
+        data.fee = (data.tokensToSend * 500) / 10000;
         data.composer = new OFTComposerMock();
 
         data.options = OptionsBuilder

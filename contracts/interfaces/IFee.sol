@@ -2,11 +2,6 @@
 
 pragma solidity ^0.8.20;
 
-struct FeeConfig {
-    uint16 feeBps;
-    bool enabled;
-}
-
 /**
  * @title Fee interface.
  * @notice A generic interface for collecting fees.
@@ -20,10 +15,13 @@ interface IFee {
 
     error InvalidBps();
     error InvalidFeeOwner();
+    error TreasuryNotSet();
+    error NullAddress();
 
     // events
     event FeeBpsSet(uint32 dstEid, uint16 feeBps, bool enabled);
     event DefaultFeeBpsSet(uint16 feeBps);
+    event TreasurySet(address treasury);
 
     // setters
     /**

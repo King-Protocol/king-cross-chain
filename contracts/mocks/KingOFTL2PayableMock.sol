@@ -16,9 +16,6 @@ contract KingOFTL2PayableMock is KingOFTL2Mock, IFee{
 
     constructor(address _lzEndpoint) KingOFTL2Mock(_lzEndpoint) {}
 
-    error TreasuryNotSet();
-    error NullAddress();
-
     function _debit(
         uint256 _amountLD,
         uint256 _minAmountLD,

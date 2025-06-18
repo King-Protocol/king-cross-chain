@@ -2,77 +2,40 @@
 pragma solidity ^0.8.22;
 
 import { KingOFTL1 } from "./KingOFTL1.sol";
-import { IFee } from "./interfaces/IFee.sol";
+import { Fee }       from "./Fee.sol";
 
+contract KingOFTL1Payable is KingOFTL1, Fee {
+    constructor(address _token, address _lzEndpoint)
+        KingOFTL1(_token, _lzEndpoint)
+    {}
 
-// @dev WARNING: This is for testing purposes only
-contract KingOFTL1Payable is KingOFTL1, IFee {
-    uint16 public constant BPS_DENOMINATOR = 10_000;
-    uint16 public constant MAX_FEE_BPS = 500;
-    uint16 public defaultFeeBps;
+    function setTreasury(address _treasury) external onlyOwner {
+        _setTreasury(_treasury);
+    }
+
+    function setDefaultFeeBps(uint16 _bps) external onlyOwner {
+        _setDefaultFeeBps(_bps);
+    }
+
+    function setFeeBps(uint32 _dstEid, uint16 _bps, bool _enabled) external onlyOwner {
+        _setFeeBps(_dstEid, _bps, _enabled);
+    }
     
-    address public treasury;
-    mapping(uint32 dstEid => FeeConfig config) public feeBps;
-
-    constructor(address _token, address _lzEndpoint) KingOFTL1(_token, _lzEndpoint) {}
-
-    error TreasuryNotSet();
-    error NullAddress();
-
     function _debit(
         uint256 _amountLD,
         uint256 _minAmountLD,
-        uint32 _dstEid
-    ) internal virtual override whenNotPaused returns (uint256, uint256) {
-        uint256 _fee = getFee(_dstEid, _amountLD);
-        if (_fee > 0) {
-            _amountLD -= _fee;
-            innerToken.transferFrom(msg.sender, treasury, _fee);
+        uint32  _dstEid
+    )
+        internal
+        override
+        whenNotPaused
+        returns (uint256, uint256)
+    {
+        uint256 fee = getFee(_dstEid, _amountLD);
+        if (fee > 0) {
+            _amountLD -= fee;
+            innerToken.transferFrom(msg.sender, treasury, fee);
         }
         return super._debit(_amountLD, _minAmountLD, _dstEid);
-    }
-
-    function setTreasury(address _treasury) external onlyOwner {
-        if (_treasury == address(0)) {
-            revert NullAddress();
-        }
-        treasury = _treasury;
-    }
-
-    /**
-     * @dev Sets the default fee basis points (BPS) for all destinations.
-     */
-    function setDefaultFeeBps(uint16 _feeBps) external onlyOwner {
-        if (treasury == address(0)) {
-            revert TreasuryNotSet();
-        }
-        if (_feeBps > MAX_FEE_BPS) revert IFee.InvalidBps();
-        defaultFeeBps = _feeBps;
-        emit DefaultFeeBpsSet(_feeBps);
-    }
-
-    /**
-     * @dev Sets the fee basis points (BPS) for a specific destination LayerZero EndpointV2 ID.
-     */
-    function setFeeBps(uint32 _dstEid, uint16 _feeBps, bool _enabled) external onlyOwner {
-        if (treasury == address(0)) {
-            revert TreasuryNotSet();
-        }
-        if (_feeBps > MAX_FEE_BPS) revert IFee.InvalidBps();
-        feeBps[_dstEid] = FeeConfig(_feeBps, _enabled);
-        emit FeeBpsSet(_dstEid, _feeBps, _enabled);
-    }
-
-    /**
-     * @dev Returns the fee for a specific destination LayerZero EndpointV2 ID.
-     */
-    function getFee(uint32 _dstEid, uint256 _amount) public view virtual returns (uint256) {
-        uint16 bps = _getFeeBps(_dstEid);
-        return bps == 0 ? 0 : (_amount * bps) / BPS_DENOMINATOR;
-    }
-
-    function _getFeeBps(uint32 _dstEid) internal view returns (uint16) {
-        FeeConfig memory config = feeBps[_dstEid];
-        return config.enabled ? config.feeBps : defaultFeeBps;
     }
 }
