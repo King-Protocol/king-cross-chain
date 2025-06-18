@@ -5,7 +5,6 @@ import { KingOFTL2 } from "./KingOFTL2.sol";
 import { Fee } from "./Fee.sol";
 
 
-// @dev WARNING: This is for testing purposes only
 contract KingOFTL2Payable is KingOFTL2, Fee {
     constructor(address _lzEndpoint) KingOFTL2(_lzEndpoint) {}
 
@@ -25,7 +24,7 @@ contract KingOFTL2Payable is KingOFTL2, Fee {
         uint256 _amountLD,
         uint256 _minAmountLD,
         uint32 _dstEid
-    ) internal virtual override whenNotPaused returns (uint256, uint256) {
+    ) internal virtual override returns (uint256, uint256) {
         uint256 _fee = getFee(_dstEid, _amountLD);
         if (_fee > 0) {
             _amountLD -= _fee;

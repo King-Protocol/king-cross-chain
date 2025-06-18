@@ -20,7 +20,7 @@ contract KingOFTL1Payable is KingOFTL1, Fee {
     function setFeeBps(uint32 _dstEid, uint16 _bps, bool _enabled) external onlyOwner {
         _setFeeBps(_dstEid, _bps, _enabled);
     }
-    
+
     function _debit(
         uint256 _amountLD,
         uint256 _minAmountLD,
@@ -28,7 +28,6 @@ contract KingOFTL1Payable is KingOFTL1, Fee {
     )
         internal
         override
-        whenNotPaused
         returns (uint256, uint256)
     {
         uint256 fee = getFee(_dstEid, _amountLD);
