@@ -6,6 +6,10 @@ import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/P
 import { AccessControlUpgradeable } from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import { PairwiseRateLimiter } from "./PairwiseRateLimiter.sol";
 
+/**
+ * @title KingOFTL1
+ * @dev This contract extends OFTAdapterUpgradeable to support pausing and rate limiting functionality. 
+ */
 contract KingOFTL1 is OFTAdapterUpgradeable, AccessControlUpgradeable, PausableUpgradeable, PairwiseRateLimiter {
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant UNPAUSER_ROLE = keccak256("UNPAUSER_ROLE");
@@ -31,6 +35,12 @@ contract KingOFTL1 is OFTAdapterUpgradeable, AccessControlUpgradeable, PausableU
         _grantRole(DEFAULT_ADMIN_ROLE, _owner);
     }
 
+    /**
+     * @dev Performs a debit operation with rate limiting.
+     * @param _amountLD The amount to debit in tokens.
+     * @param _minAmountLD The minimum amount to debit in tokens.
+     * @param _dstEid The destination endpoint ID.
+     */
     function _debit(
         uint256 _amountLD,
         uint256 _minAmountLD,
@@ -40,6 +50,12 @@ contract KingOFTL1 is OFTAdapterUpgradeable, AccessControlUpgradeable, PausableU
         return super._debit(_amountLD, _minAmountLD, _dstEid);
     }
 
+    /**
+     * @dev Performs a credit operation with rate limiting.
+     * @param _to The address to credit the tokens to.
+     * @param _amountLD The amount to credit in tokens.
+     * @param _srcEid The source endpoint ID.
+     */
     function _credit(
         address _to,
         uint256 _amountLD,
@@ -49,18 +65,34 @@ contract KingOFTL1 is OFTAdapterUpgradeable, AccessControlUpgradeable, PausableU
         return super._credit(_to, _amountLD, 0);
     }
 
+    /**
+     * @notice Sets the outbound rate limits for the bridge
+     * @param _rateLimitConfigs  An array of RateLimitConfig structs defining the rate limits for each destination endpoint
+     */
     function setOutboundRateLimits(RateLimitConfig[] calldata _rateLimitConfigs) external onlyOwner {
         _setOutboundRateLimits(_rateLimitConfigs);
     }
 
+    /**
+     * @notice Sets the inbound rate limits for the bridge
+     * @param _rateLimitConfigs  An array of RateLimitConfig structs defining the rate limits for each source endpoint
+     */
     function setInboundRateLimits(RateLimitConfig[] calldata _rateLimitConfigs) external onlyOwner {
         _setInboundRateLimits(_rateLimitConfigs);
     }
 
+    /**
+     * @notice Pauses the bridge functionality
+     * @dev This function can only be called by an account with the PAUSER_ROLE
+     */
     function pauseBridge() public onlyRole(PAUSER_ROLE) {
         _pause();
     }
 
+    /**
+     * @notice Unpauses the bridge functionality
+     * @dev This function can only be called by an account with the UNPAUSER_ROLE
+     */
     function unpauseBridge() external onlyRole(UNPAUSER_ROLE) {
         _unpause();
     }
