@@ -107,8 +107,8 @@ contract KingOFTL1Test is TestHelperOz5 {
         bOFT.setTreasury(treasury);
         aOFTAdapter.setDefaultFeeBps(100);
         bOFT.setDefaultFeeBps(100);
-        aOFTAdapter.setFeeBps(bEid, 1000, true);
-        bOFT.setFeeBps(aEid, 1000, true);
+        aOFTAdapter.setFeeBps(bEid, 500, true);
+        bOFT.setFeeBps(aEid, 500, true);
     }
 
     function test_constructor() public {
@@ -126,7 +126,7 @@ contract KingOFTL1Test is TestHelperOz5 {
     function test_send_oft_adapter() public {
         uint256 tokensToSend = 1 ether;
         bytes memory options = OptionsBuilder.newOptions().addExecutorLzReceiveOption(200000, 0);
-        uint256 _fee = (tokensToSend * 1000) / 10000;
+        uint256 _fee = (tokensToSend * 500) / 10000;
         SendParam memory sendParam = SendParam(
             bEid,
             addressToBytes32(userB),
@@ -160,7 +160,7 @@ contract KingOFTL1Test is TestHelperOz5 {
 
         SendData memory data;
         data.tokensToSend = 1 ether;
-        data.fee = (data.tokensToSend * 1000) / 10000;
+        data.fee = (data.tokensToSend * 500) / 10000;
         data.composer = new OFTComposerMock();
 
         data.options = OptionsBuilder
@@ -215,8 +215,94 @@ contract KingOFTL1Test is TestHelperOz5 {
         assertEq(data.composer.guid(), guid_);
         assertEq(data.composer.message(), composerMsg_);
         assertEq(data.composer.executor(), address(this));
-        assertEq(data.composer.extraData(), composerMsg_); // default to setting the extraData to the message as well to test
+        assertEq(data.composer.extraData(), composerMsg_);
     }
 
-    // TODO import the rest of oft tests?
+     function test_send_oft_adapter_default_fee() public {
+        aOFTAdapter.setFeeBps(bEid, 0, false);
+
+        uint256 tokensToSend = 1 ether;
+        uint256 expectedFee   = tokensToSend * 100 / 10_000; // 1 %
+
+        bytes memory opts = OptionsBuilder.newOptions().addExecutorLzReceiveOption(200000, 0);
+        SendParam memory p = SendParam(
+            bEid,
+            addressToBytes32(userB),
+            tokensToSend,
+            tokensToSend - expectedFee,
+            opts,
+            "",
+            ""
+        );
+        MessagingFee memory feeData = aOFTAdapter.quoteSend(p, false);
+
+        vm.prank(userA);
+        aToken.approve(address(aOFTAdapter), tokensToSend);
+        vm.prank(userA);
+        aOFTAdapter.send{ value: feeData.nativeFee }(p, feeData, payable(address(this)));
+
+        verifyPackets(bEid, addressToBytes32(address(bOFT)));
+
+        assertEq(aToken.balanceOf(userA),       initialBalance - tokensToSend);
+        assertEq(aToken.balanceOf(address(aOFTAdapter)), tokensToSend - expectedFee);
+        assertEq(bOFT.balanceOf(userB),         tokensToSend - expectedFee);
+        assertEq(aToken.balanceOf(treasury),    expectedFee);
+    }
+
+    function test_send_oft_adapter_updated_default_fee() public {
+        aOFTAdapter.setFeeBps(bEid, 0, false);
+        aOFTAdapter.setDefaultFeeBps(500); // 5 %
+
+        uint256 tokensToSend = 2 ether;
+        uint256 expectedFee  = tokensToSend * 500 / 10_000;
+
+        bytes memory opts = OptionsBuilder.newOptions().addExecutorLzReceiveOption(200000, 0);
+        SendParam memory p = SendParam(
+            bEid,
+            addressToBytes32(userB),
+            tokensToSend,
+            tokensToSend - expectedFee,
+            opts,
+            "",
+            ""
+        );
+        MessagingFee memory feeData = aOFTAdapter.quoteSend(p, false);
+
+        vm.prank(userA);
+        aToken.approve(address(aOFTAdapter), tokensToSend);
+        vm.prank(userA);
+        aOFTAdapter.send{ value: feeData.nativeFee }(p, feeData, payable(address(this)));
+
+        verifyPackets(bEid, addressToBytes32(address(bOFT)));
+
+        assertEq(aToken.balanceOf(userA),       initialBalance - tokensToSend);
+        assertEq(aToken.balanceOf(address(aOFTAdapter)), tokensToSend - expectedFee);
+        assertEq(bOFT.balanceOf(userB),         tokensToSend - expectedFee);
+        assertEq(aToken.balanceOf(treasury),    expectedFee);
+    }
+
+    bytes NOT_OWNER_ERR =
+    abi.encodeWithSignature(
+        "OwnableUnauthorizedAccount(address)",
+        address(userA)
+    );
+
+    function test_setTreasury_onlyOwner_revert() public {
+        vm.prank(userA);
+        vm.expectRevert(NOT_OWNER_ERR);
+        aOFTAdapter.setTreasury(userA);
+    }
+
+    function test_setDefaultFeeBps_onlyOwner_revert() public {
+        vm.prank(userA);
+        vm.expectRevert(NOT_OWNER_ERR);
+        aOFTAdapter.setDefaultFeeBps(200);
+    }
+
+    function test_setFeeBps_onlyOwner_revert() public {
+        vm.prank(userA);
+        vm.expectRevert(NOT_OWNER_ERR);
+        aOFTAdapter.setFeeBps(bEid, 500, true);
+    }
+
 }

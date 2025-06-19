@@ -8,15 +8,13 @@ import { IFee} from "../interfaces/IFee.sol";
 // @dev WARNING: This is for testing purposes only
 contract KingOFTL2PayableMock is KingOFTL2Mock, IFee{
        uint16 public constant BPS_DENOMINATOR = 10_000;
+    uint16 public constant MAX_FEE_BPS = 500;
     uint16 public defaultFeeBps;
     
     address public treasury;
     mapping(uint32 dstEid => FeeConfig config) public feeBps;
 
     constructor(address _lzEndpoint) KingOFTL2Mock(_lzEndpoint) {}
-
-    error TreasuryNotSet();
-    error NullAddress();
 
     function _debit(
         uint256 _amountLD,
@@ -42,11 +40,11 @@ contract KingOFTL2PayableMock is KingOFTL2Mock, IFee{
      /**
      * @dev Sets the default fee basis points (BPS) for all destinations.
      */
-    function setDefaultFeeBps(uint16 _feeBps) external {
+    function setDefaultFeeBps(uint16 _feeBps) external onlyOwner {
         if (treasury == address(0)) {
             revert TreasuryNotSet();
         }
-        if (_feeBps > BPS_DENOMINATOR) revert IFee.InvalidBps();
+        if (_feeBps > MAX_FEE_BPS) revert IFee.InvalidBps();
         defaultFeeBps = _feeBps;
         emit DefaultFeeBpsSet(_feeBps);
     }
@@ -54,11 +52,11 @@ contract KingOFTL2PayableMock is KingOFTL2Mock, IFee{
     /**
      * @dev Sets the fee basis points (BPS) for a specific destination LayerZero EndpointV2 ID.
      */
-    function setFeeBps(uint32 _dstEid, uint16 _feeBps, bool _enabled) external {
+    function setFeeBps(uint32 _dstEid, uint16 _feeBps, bool _enabled) external onlyOwner {
         if (treasury == address(0)) {
             revert TreasuryNotSet();
         }
-        if (_feeBps > BPS_DENOMINATOR) revert IFee.InvalidBps();
+        if (_feeBps > MAX_FEE_BPS) revert IFee.InvalidBps();
         feeBps[_dstEid] = FeeConfig(_feeBps, _enabled);
         emit FeeBpsSet(_dstEid, _feeBps, _enabled);
     }

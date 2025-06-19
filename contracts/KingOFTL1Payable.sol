@@ -2,77 +2,65 @@
 pragma solidity ^0.8.22;
 
 import { KingOFTL1 } from "./KingOFTL1.sol";
-import { IFee } from "./interfaces/IFee.sol";
+import { Fee }       from "./Fee.sol";
 
 
-// @dev WARNING: This is for testing purposes only
-contract KingOFTL1Payable is KingOFTL1, IFee {
-    uint16 public constant BPS_DENOMINATOR = 10_000;
-    uint16 public defaultFeeBps;
-    
-    address public treasury;
-    mapping(uint32 dstEid => FeeConfig config) public feeBps;
+/**
+ * @title KingOFTL1Payable
+ * @dev This contract extends KingOFTL1 to support fee payments.
+ * It allows setting a treasury address and managing fees for cross-chain transactions.
+ */
+contract KingOFTL1Payable is KingOFTL1, Fee {
+    constructor(address _token, address _lzEndpoint)
+        KingOFTL1(_token, _lzEndpoint)
+    {}
 
-    constructor(address _token, address _lzEndpoint) KingOFTL1(_token, _lzEndpoint) {}
+    /**
+     * @dev Sets the treasury address where fees will be secured.
+     * @param _treasury The address of the treasury.
+     */
+    function setTreasury(address _treasury) external onlyOwner {
+        _setTreasury(_treasury);
+    }
 
-    error TreasuryNotSet();
-    error NullAddress();
+    /**
+     * @dev Sets the default fee basis points (bps) for all destinations.
+     * @param _bps The default fee in basis points.
+     */
+    function setDefaultFeeBps(uint16 _bps) external onlyOwner {
+        _setDefaultFeeBps(_bps);
+    }
 
+    /**
+     * @dev Sets the fee basis points (bps) for a specific destination.
+     * @param _dstEid The destination endpoint ID.
+     * @param _bps The fee in basis points.
+     * @param _enabled Whether the fee is enabled or not.
+     */
+    function setFeeBps(uint32 _dstEid, uint16 _bps, bool _enabled) external onlyOwner {
+        _setFeeBps(_dstEid, _bps, _enabled);
+    }
+
+    /**
+     * @dev Performs a debit operation with fee deduction.
+     * @param _amountLD The amount to debit in tokens.
+     * @param _minAmountLD The minimum amount to debit in tokens.
+     * @param _dstEid The destination endpoint ID.
+     */
     function _debit(
         uint256 _amountLD,
         uint256 _minAmountLD,
-        uint32 _dstEid
-    ) internal virtual override whenNotPaused returns (uint256, uint256) {
-        _checkAndUpdateOutboundRateLimit(_dstEid, _amountLD);
-        uint256 _fee = getFee(_dstEid, _amountLD);
-        if (_fee > 0) {
-            _amountLD -= _fee;
-            innerToken.transferFrom(msg.sender, treasury, _fee);
+        uint32  _dstEid
+    )
+        internal
+        override
+        returns (uint256, uint256)
+    {
+        uint256 fee = getFee(_dstEid, _amountLD);
+        if (fee > 0) {
+            _amountLD -= fee;
+            innerToken.transferFrom(msg.sender, treasury, fee);
         }
         return super._debit(_amountLD, _minAmountLD, _dstEid);
-    }
-
-    function setTreasury(address _treasury) external onlyOwner {
-        if (_treasury == address(0)) {
-            revert NullAddress();
-        }
-        treasury = _treasury;
-    }
-
-    /**
-     * @dev Sets the default fee basis points (BPS) for all destinations.
-     */
-    function setDefaultFeeBps(uint16 _feeBps) external {
-        if (treasury == address(0)) {
-            revert TreasuryNotSet();
-        }
-        if (_feeBps > BPS_DENOMINATOR) revert IFee.InvalidBps();
-        defaultFeeBps = _feeBps;
-        emit DefaultFeeBpsSet(_feeBps);
-    }
-
-    /**
-     * @dev Sets the fee basis points (BPS) for a specific destination LayerZero EndpointV2 ID.
-     */
-    function setFeeBps(uint32 _dstEid, uint16 _feeBps, bool _enabled) external {
-        if (treasury == address(0)) {
-            revert TreasuryNotSet();
-        }
-        if (_feeBps > BPS_DENOMINATOR) revert IFee.InvalidBps();
-        feeBps[_dstEid] = FeeConfig(_feeBps, _enabled);
-        emit FeeBpsSet(_dstEid, _feeBps, _enabled);
-    }
-
-    /**
-     * @dev Returns the fee for a specific destination LayerZero EndpointV2 ID.
-     */
-    function getFee(uint32 _dstEid, uint256 _amount) public view virtual returns (uint256) {
-        uint16 bps = _getFeeBps(_dstEid);
-        return bps == 0 ? 0 : (_amount * bps) / BPS_DENOMINATOR;
-    }
-
-    function _getFeeBps(uint32 _dstEid) internal view returns (uint16) {
-        FeeConfig memory config = feeBps[_dstEid];
-        return config.enabled ? config.feeBps : defaultFeeBps;
     }
 }

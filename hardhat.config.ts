@@ -5,7 +5,10 @@ import 'hardhat-contract-sizer'
 
 import '@layerzerolabs/toolbox-hardhat'
 import '@nomicfoundation/hardhat-chai-matchers'
-import { HardhatUserConfig, HttpNetworkAccountsUserConfig, HardhatRuntimeEnvironment, LinePreprocessorConfig } from 'hardhat/types'
+import {
+    HardhatUserConfig,
+    HttpNetworkAccountsUserConfig,
+} from 'hardhat/types'
 
 import { EndpointId } from '@layerzerolabs/lz-definitions'
 import './type-extensions'
@@ -17,8 +20,8 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY
 const accounts: HttpNetworkAccountsUserConfig | undefined = MNEMONIC
     ? { mnemonic: MNEMONIC }
     : PRIVATE_KEY
-        ? [PRIVATE_KEY]
-        : undefined
+      ? [PRIVATE_KEY]
+      : undefined
 
 if (accounts == null) {
     console.warn(
@@ -42,11 +45,10 @@ const config: HardhatUserConfig = {
                 },
             },
         ],
-
     },
 
     networks: {
-        'mainnet': {
+        mainnet: {
             chainId: 1,
             eid: EndpointId.ETHEREUM_V2_MAINNET,
             url: process.env.RPC_URL_MAINNET || 'https://eth.drpc.org/',
@@ -55,80 +57,44 @@ const config: HardhatUserConfig = {
                 tokenAddress: '0x8F08B70456eb22f6109F57b8fafE862ED28E6040',
             },
             safeConfig: {
-<<<<<<< HEAD
-<<<<<<< HEAD
-                safeUrl: 'https://safe-transaction-mainnet.safe.global',
-=======
                 safeUrl: 'https://safe-transaction-mainnet.safe.global/api/api/v1/',
->>>>>>> c56c292 (feat: arbitrum and base configuration)
-=======
-                safeUrl: 'https://safe-transaction-mainnet.safe.global',
->>>>>>> 65db68e (feat: manual swell wiring)
+
                 safeAddress: process.env.MAINNET_OWNER_ADDRESS || '',
-            }
+            },
         },
-        'swell': {
+        swell: {
             chainId: 1923,
             eid: EndpointId.SWELL_V2_MAINNET,
             url: process.env.RPC_URL_SWELL || 'https://rpc.ankr.com/swell/',
             accounts,
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 65db68e (feat: manual swell wiring)
-            // safeConfig: {
-            //     safeUrl: '',
-            //     safeAddress: process.env.SWELL_OWNER_ADDRESS || '',
-            // }
-<<<<<<< HEAD
-=======
             safeConfig: {
                 safeUrl: '',
                 safeAddress: process.env.SWELL_OWNER_ADDRESS || '',
-            }
->>>>>>> c56c292 (feat: arbitrum and base configuration)
-=======
->>>>>>> 65db68e (feat: manual swell wiring)
+            },
         },
-        'arbitrum': {
+        arbitrum: {
             chainId: 42161,
             eid: EndpointId.ARBITRUM_V2_MAINNET,
             url: process.env.RPC_URL_ARBITRUM || 'https://arb1.drpc.org/',
             accounts,
             safeConfig: {
-<<<<<<< HEAD
-<<<<<<< HEAD
-                safeUrl: 'https://safe-transaction-arbitrum.safe.global',
-=======
                 safeUrl: 'https://safe-transaction-arbitrum.safe.global/api/api/v1',
->>>>>>> c56c292 (feat: arbitrum and base configuration)
-=======
-                safeUrl: 'https://safe-transaction-arbitrum.safe.global',
->>>>>>> 65db68e (feat: manual swell wiring)
                 safeAddress: process.env.ARBITRUM_OWNER_ADDRESS || '',
-            }
+            },
         },
-        'base': {
+        base: {
             chainId: 8453,
             eid: EndpointId.BASE_V2_MAINNET,
             url: process.env.RPC_URL_BASE || 'https://rpc.ankr.com/8453/',
             accounts,
             safeConfig: {
-<<<<<<< HEAD
-<<<<<<< HEAD
-                safeUrl: 'https://safe-transaction-base.safe.global',
-=======
                 safeUrl: 'https://safe-transaction-base.safe.global/api/api/v1/',
->>>>>>> c56c292 (feat: arbitrum and base configuration)
-=======
-                safeUrl: 'https://safe-transaction-base.safe.global',
->>>>>>> 65db68e (feat: manual swell wiring)
                 safeAddress: process.env.BASE_OWNER_ADDRESS || '',
-            }
+            },
         },
         hardhat: {
             allowUnlimitedContractSize: true,
-            blockGasLimit: 32000000
+            blockGasLimit: 32000000,
         },
     },
     namedAccounts: {
